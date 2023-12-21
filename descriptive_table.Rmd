@@ -1,0 +1,86 @@
+---
+title: "ASD-descriptive"
+author: "Søren"
+date: "2023-12-21"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(pacman)
+p_load("tidyverse", "gt", "gtExtras")
+```
+
+```{r}
+setwd('.')
+df <- read_csv("../data/Eye-tracking Output/cleaned_data.csv") 
+```
+
+```{r}
+# Load necessary libraries
+library(dplyr)
+library(gt)
+
+# Assuming 'df' is your dataframe
+
+# Creating a subset with unique participants
+unique_participants_df <- df %>% distinct(Participant, .keep_all = TRUE)
+
+# Calculate mean and SD for age
+mean_age <- mean(unique_participants_df$Age, na.rm = TRUE)
+sd_age <- sd(unique_participants_df$Age, na.rm = TRUE)
+
+# Count unique participants for each gender
+unique_gender_counts <- unique_participants_df %>% 
+  group_by(Gender) %>% 
+  summarise(Count = n())
+
+# Count unique participants for each class (ASD or TD)
+unique_class_counts <- unique_participants_df %>% 
+  group_by(Class) %>% 
+  summarise(Count = n())
+
+# CARS score stats for ASD participants
+mean_cars_score <- mean(unique_participants_df[unique_participants_df$Class == 'ASD',]$`CARS Score`, na.rm = TRUE)
+sd_cars_score <- sd(unique_participants_df[unique_participants_df$Class == 'ASD',]$`CARS Score`, na.rm = TRUE)
+
+# Total number of unique participants
+n_participants <- n_distinct(unique_participants_df$Participant)
+
+# Number of unique stimuli
+n_unique_stimuli <- n_distinct(df$Stimulus)
+
+# Create a summary table using gt
+summary_table <- tibble(
+  Statistic = c("Mean Age of Participants", "Gender Distribution - Male", "Gender Distribution - Female",
+                "Class Distribution - ASD", "Class Distribution - TD",
+                "Mean CARS Score for ASD", "Total Unique Participants", "Number of Unique Stimuli"),
+  Value = c(sprintf("%.2f (SD: %.2f) years", mean_age, sd_age),
+            unique_gender_counts[unique_gender_counts$Gender == "M",]$Count,
+            unique_gender_counts[unique_gender_counts$Gender == "F",]$Count,
+            unique_class_counts[unique_class_counts$Class == "ASD",]$Count,
+            unique_class_counts[unique_class_counts$Class == "TD",]$Count,
+            ifelse(is.na(mean_cars_score), "NA", sprintf("%.2f (SD: %.2f)", mean_cars_score, sd_cars_score)),
+            n_participants,
+            n_unique_stimuli)
+) %>%
+  gt() %>%
+  gt_theme_nytimes() %>% 
+  tab_header(
+    title = "Summary Statistics of Eye-tracking Dataset"
+  ) %>%
+  cols_label(
+    Statistic = "Statistic",
+    Value = "Value"
+  )
+# Print the summary table
+print(summary_table)
+
+# Export the table as a PNG file
+gt::gtsave(summary_table, filename = "../data/summary_table.png")
+
+# Alternatively, export as HTML if preferred
+#gt::gtsave(styled_table, filename = "summary_table.html")
+
+```
+
