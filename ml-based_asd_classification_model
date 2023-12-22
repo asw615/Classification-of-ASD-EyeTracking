@@ -1,0 +1,62 @@
+digraph "ML-based ASD classification model" {
+	graph [fontcolor="#2D3436" fontname="Sans-Serif" fontsize=15 label="ML-based ASD classification model" nodesep=0.60 pad=2.0 rankdir=TB ranksep=0.75 splines=ortho]
+	node [fixedsize=true fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13 height=1.4 imagescale=true labelloc=b shape=box style=rounded width=1.4]
+	edge [color="#7B8894"]
+	subgraph cluster_Dataset {
+		graph [bgcolor="#E5F5FD" fontname="Sans-Serif" fontsize=12 label=Dataset labeljust=l pencolor="#AEB6BE" rankdir=LR shape=box style=rounded]
+		"4e666b4945614e2abcdd5a4b80815ea6" [label=Dataset height=1.9 image="/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/resources/programming/flowchart/multiple-documents.png" shape=none]
+	}
+	subgraph "cluster_Preprocessing Steps" {
+		graph [bgcolor="#E5F5FD" fontname="Sans-Serif" fontsize=12 label="Preprocessing Steps" labeljust=l pencolor="#AEB6BE" rankdir=LR shape=box style=rounded]
+		f9a8201ced4646778c1205b9a43c8e4c [label="Pre-processing" height=1.9 image="/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/resources/programming/flowchart/preparation.png" shape=none]
+		"71ebb7ecb4a54ab0954bf87577d81aa6" [label="Missing Values Imputation" height=1.9 image="/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/resources/generic/blank/blank.png" shape=none]
+		bf1b4236fc9246aeb380b7439fd35a80 [label=Scaling height=1.9 image="/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/resources/generic/blank/blank.png" shape=none]
+		"6821c6abb5a74331b90def9a053b8808" [label=SMOT height=1.9 image="/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/resources/generic/blank/blank.png" shape=none]
+		c693c9635f15459aafb85bea2e87e202 [label="Outliers Removal" height=1.9 image="/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/resources/generic/blank/blank.png" shape=none]
+		"3965cd58595f4a1d85b0fd387032c8f2" [label="Sequential Forward Selection" height=1.9 image="/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/resources/generic/blank/blank.png" shape=none]
+	}
+	subgraph cluster_Model {
+		graph [bgcolor="#E5F5FD" fontname="Sans-Serif" fontsize=12 label=Model labeljust=l pencolor="#AEB6BE" rankdir=LR shape=box style=rounded]
+		"3c209f12805b4b80a14f634649645bf4" [label=Model height=1.9 image="/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/resources/programming/language/python.png" shape=none]
+		eebc9af1143e4163b087018f2d09cc34 [label=SVM height=1.9 image="/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/resources/generic/blank/blank.png" shape=none]
+		"4266e2e228834c1d96584206886abc8e" [label=MLP height=1.9 image="/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/resources/generic/blank/blank.png" shape=none]
+		"6ea544cbd2b0422381032c55f8f5ce24" [label=NB height=1.9 image="/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/resources/generic/blank/blank.png" shape=none]
+		"1d3fc84e9a7c4cf39649ad326c4095d2" [label=RF height=1.9 image="/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/resources/generic/blank/blank.png" shape=none]
+	}
+	subgraph cluster_Evaluation {
+		graph [bgcolor="#E5F5FD" fontname="Sans-Serif" fontsize=12 label=Evaluation labeljust=l pencolor="#AEB6BE" rankdir=LR shape=box style=rounded]
+		"5d613d66e70546548c7090926eb0d233" [label=Evaluation height=1.9 image="/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/resources/programming/flowchart/input-output.png" shape=none]
+		"0458b30424e24289a7920a6f8b25e753" [label=Accuracy height=1.9 image="/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/resources/generic/blank/blank.png" shape=none]
+		"4a9806b84d444517bd207339f4d70539" [label=Precision height=1.9 image="/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/resources/generic/blank/blank.png" shape=none]
+		"4c68a1ca4179493ebeae2f54533fbaa6" [label=Recall height=1.9 image="/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/resources/generic/blank/blank.png" shape=none]
+	}
+	subgraph cluster_Validation {
+		graph [bgcolor="#E5F5FD" fontname="Sans-Serif" fontsize=12 label=Validation labeljust=l pencolor="#AEB6BE" rankdir=LR shape=box style=rounded]
+		"9c75c9a321c84df684258304844095d3" [label="Validation
+-K-Fold" height=2.3 image="/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/resources/programming/flowchart/preparation.png" shape=none]
+	}
+	ab0686fbccf245c9b14b99ad6c0fcff0 [label=Output height=1.9 image="/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/resources/programming/flowchart/input-output.png" shape=none]
+	c1611d0853294c82838b557fda624ecf [label="Prediction
+-ASD
+-TC" height=2.7 image="/Library/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages/resources/programming/flowchart/input-output.png" shape=none]
+	"4e666b4945614e2abcdd5a4b80815ea6" -> f9a8201ced4646778c1205b9a43c8e4c [dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	f9a8201ced4646778c1205b9a43c8e4c -> "71ebb7ecb4a54ab0954bf87577d81aa6" [dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	f9a8201ced4646778c1205b9a43c8e4c -> bf1b4236fc9246aeb380b7439fd35a80 [dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	f9a8201ced4646778c1205b9a43c8e4c -> "6821c6abb5a74331b90def9a053b8808" [dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	f9a8201ced4646778c1205b9a43c8e4c -> c693c9635f15459aafb85bea2e87e202 [dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	f9a8201ced4646778c1205b9a43c8e4c -> "3965cd58595f4a1d85b0fd387032c8f2" [dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"71ebb7ecb4a54ab0954bf87577d81aa6" -> "3c209f12805b4b80a14f634649645bf4" [dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	bf1b4236fc9246aeb380b7439fd35a80 -> "3c209f12805b4b80a14f634649645bf4" [dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"6821c6abb5a74331b90def9a053b8808" -> "3c209f12805b4b80a14f634649645bf4" [dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	c693c9635f15459aafb85bea2e87e202 -> "3c209f12805b4b80a14f634649645bf4" [dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"3965cd58595f4a1d85b0fd387032c8f2" -> "3c209f12805b4b80a14f634649645bf4" [dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"3c209f12805b4b80a14f634649645bf4" -> "5d613d66e70546548c7090926eb0d233" [dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"5d613d66e70546548c7090926eb0d233" -> "0458b30424e24289a7920a6f8b25e753" [dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"5d613d66e70546548c7090926eb0d233" -> "4a9806b84d444517bd207339f4d70539" [dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"5d613d66e70546548c7090926eb0d233" -> "4c68a1ca4179493ebeae2f54533fbaa6" [dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"0458b30424e24289a7920a6f8b25e753" -> "9c75c9a321c84df684258304844095d3" [dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"4a9806b84d444517bd207339f4d70539" -> "9c75c9a321c84df684258304844095d3" [dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"4c68a1ca4179493ebeae2f54533fbaa6" -> "9c75c9a321c84df684258304844095d3" [dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	"9c75c9a321c84df684258304844095d3" -> ab0686fbccf245c9b14b99ad6c0fcff0 [dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+	ab0686fbccf245c9b14b99ad6c0fcff0 -> c1611d0853294c82838b557fda624ecf [dir=forward fontcolor="#2D3436" fontname="Sans-Serif" fontsize=13]
+}

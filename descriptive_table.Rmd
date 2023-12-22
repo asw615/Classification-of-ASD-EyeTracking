@@ -8,7 +8,7 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(pacman)
-p_load("tidyverse", "gt", "gtExtras")
+p_load("tidyverse", "gt", "gtExtras", "DiagrammeR", "DiagrammeRsvg", "webshot")
 ```
 
 ```{r}
@@ -82,5 +82,41 @@ gt::gtsave(summary_table, filename = "../data/summary_table.png")
 # Alternatively, export as HTML if preferred
 #gt::gtsave(styled_table, filename = "summary_table.html")
 
+```
+
+```{r}
+
+
+grViz("
+digraph flowchart {
+
+  # Define nodes
+  node [shape=box]
+  A[label='Dataset']
+  B[label='Pre-processing']
+  C[label='Train Dataset']
+  D[label='Test Dataset']
+  E[label='Validation Dataset']
+  F[label='LSTM Model']
+  G[label='Evaluation Parameters\n-Accuracy\n- Precision\n- Recall']
+  H[label='Validation\n- K-Fold']
+  I[label='Output']
+  J[label='Prediction\n- ASD\n- TD']
+
+  # Connect nodes
+  A -> B -> {C D E}
+  C -> F -> G -> H -> I -> J
+
+  # Subgraph for preprocessing steps
+  subgraph cluster_0 {
+    P2label='Preprocessing Steps'
+    P1[label='-Missing values Imputation\n-Scaling\n-SMOT\n-Outliers Removal\n-Sequential Forward Selection']
+  }
+
+  # Connect preprocessing subgraph to main flow
+  B -> 
+  
+}
+")
 ```
 
