@@ -83,9 +83,146 @@ gt::gtsave(summary_table, filename = "../data/summary_table.png")
 #gt::gtsave(styled_table, filename = "summary_table.html")
 
 ```
+```{r}
+# Load necessary libraries
+library(dplyr)
+library(gt)
+
+# Assuming 'df' is your dataframe
+
+# Creating a subset with unique participants
+unique_participants_df <- df %>% distinct(Participant, .keep_all = TRUE)
+
+# Calculate mean and SD for age
+mean_age <- mean(unique_participants_df$Age, na.rm = TRUE)
+sd_age <- sd(unique_participants_df$Age, na.rm = TRUE)
+
+# Count unique participants for each gender
+unique_gender_counts <- unique_participants_df %>% 
+  group_by(Gender) %>% 
+  summarise(Count = n())
+
+# Gender difference in ASD
+asd_gender_distribution <- unique_participants_df %>% 
+  filter(Class == "ASD") %>%
+  group_by(Gender) %>%
+  summarise(ASD_Count = n())
+
+# Merge gender counts with ASD gender distribution
+gender_asd_distribution <- left_join(unique_gender_counts, asd_gender_distribution, by = "Gender")
+
+# Format gender distribution with ASD count
+gender_asd_distribution$Formatted <- paste(gender_asd_distribution$Gender, gender_asd_distribution$Count, "(ASD:", gender_asd_distribution$ASD_Count, ")")
+
+# Count unique participants for each class (ASD or TD)
+unique_class_counts <- unique_participants_df %>% 
+  group_by(Class) %>% 
+  summarise(Count = n())
+
+# CARS score stats for ASD participants
+mean_cars_score <- mean(unique_participants_df[unique_participants_df$Class == 'ASD',]$`CARS Score`, na.rm = TRUE)
+sd_cars_score <- sd(unique_participants_df[unique_participants_df$Class == 'ASD',]$`CARS Score`, na.rm = TRUE)
+
+# Total number of unique participants
+n_participants <- n_distinct(unique_participants_df$Participant)
+
+# Number of unique stimuli
+n_unique_stimuli <- n_distinct(df$Stimulus)
+
+# Create a summary table using gt
+summary_table <- tibble(
+  Statistic = c("Total Unique Participants", 
+                "Class Distribution - ASD", 
+                "Class Distribution - TD",
+                "Gender Distribution - Female", 
+                "Gender Distribution - Male",
+                "Mean Age of Participants", 
+                "Mean CARS Score for ASD", 
+                "Number of Unique Stimuli"),
+  Value = c(n_participants,
+            unique_class_counts[unique_class_counts$Class == "ASD",]$Count,
+            unique_class_counts[unique_class_counts$Class == "TD",]$Count,
+            gender_asd_distribution[gender_asd_distribution$Gender == "F",]$Formatted,
+            gender_asd_distribution[gender_asd_distribution$Gender == "M",]$Formatted,
+            sprintf("%.2f (SD: %.2f) years", mean_age, sd_age),
+            ifelse(is.na(mean_cars_score), "NA", sprintf("%.2f (SD: %.2f)", mean_cars_score, sd_cars_score)),
+            n_unique_stimuli)
+) %>%
+  gt() %>%
+  gt_theme_nytimes() %>% 
+  tab_header(
+    title = "Summary Statistics of Eye-tracking Dataset"
+  ) %>%
+  cols_label(
+    Statistic = "Statistic",
+    Value = "Value"
+  )
+
+# Print the summary table
+print(summary_table)
+
+# Export the table as a PNG file
+gt::gtsave(summary_table, filename = "../data/summary_table.png")
+
+# Alternatively, export as HTML if preferred
+#gt::gtsave(summary_table, filename = "summary_table.html")
+
+```
+
 
 ```{r}
+# Load the necessary library
+library(gt)
 
+# Define the scores directly
+scores_df <- data.frame(
+  Metric = c("Accuracy", "F1 Score", "Sensitivity", "Specificity"),
+  Score = c("83.94% (95% CI: 0.71 - 0.97)", "85.69% (95% CI: 0.75 - 0.96)", "86.48% (95% CI: 0.78 - 0.95)", "80.00% (95% CI: 0.56 - 1.00)")
+)
+
+# Create a summary table using gt
+summary_table <- scores_df %>%
+  gt() %>%
+  gt_theme_nytimes() %>% 
+  tab_header(
+    title = "Summary of Model Performance Scores"
+  ) %>%
+  cols_label(
+    Metric = "Metric",
+    Score = "Score"
+  )
+
+# Print the summary table
+print(summary_table)
+
+# Optional: Export the table as a PNG file
+gt::gtsave(summary_table, filename = "../data/model_performance_scores.png")
+```
+
+```{r}
+confusion_matrix <- matrix(c(4, 24, 23, 5), nrow = 2, byrow = TRUE)
+
+# Add row and column names for clarity
+rownames(confusion_matrix) <- c("ASD", "TD")
+colnames(confusion_matrix) <- c("Predicted TD", "Predicted ASD")
+
+# Convert matrix to dataframe for ggplot
+confusion_df <- as.data.frame(as.table(confusion_matrix))
+
+# Plotting the confusion matrix
+ggplot(data = confusion_df, aes(x = Var1, y = Var2, fill = Freq)) +
+  geom_tile() +
+  geom_text(aes(label = sprintf("%0.0f", Freq)), vjust = 1) +
+  scale_fill_gradient(low = "white", high = "steelblue") +
+  labs(title = "Confusion Matrix for ASD vs TD Prediction", x = "Actual Class", y = "Predicted Class") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, vjust = 1, hjust = 1))
+  
+```
+
+
+```{r}
+library(DiagrammeR)
 
 grViz("
 digraph flowchart {
@@ -97,26 +234,35 @@ digraph flowchart {
   C[label='Train Dataset']
   D[label='Test Dataset']
   E[label='Validation Dataset']
-  F[label='LSTM Model']
-  G[label='Evaluation Parameters\n-Accuracy\n- Precision\n- Recall']
-  H[label='Validation\n- K-Fold']
+  F[label='Model']
+  G[label='Evaluation Parameters\n-Accuracy\n-Precision\n-Recall']
+  H[label='Validation\n-K-Fold']
   I[label='Output']
-  J[label='Prediction\n- ASD\n- TD']
+  J[label='Prediction\n-ASD\n-TC']
 
   # Connect nodes
   A -> B -> {C D E}
   C -> F -> G -> H -> I -> J
 
   # Subgraph for preprocessing steps
-  subgraph cluster_0 {
-    P2label='Preprocessing Steps'
+    subgraph cluster_0 {
+    label='Preprocessing Steps'
     P1[label='-Missing values Imputation\n-Scaling\n-SMOT\n-Outliers Removal\n-Sequential Forward Selection']
   }
 
   # Connect preprocessing subgraph to main flow
-  B -> 
+  B -> P1
   
 }
 ")
+
+
 ```
+
+\text{Accuracy} = \frac{\text{True Positives (TP)} + \text{True Negatives (TN)}}{\text{Total Observations}}
+\text{Sensitivity} = \frac{\text{True Positives (TP)}}{\text{True Positives (TP)} + \text{False Negatives (FN)}}
+\text{Specificity} = \frac{\text{True Negatives (TN)}}{\text{True Negatives (TN)} + \text{False Positives (FP)}}
+\text{F1 Score} = 2 \times \frac{\text{Precision} \times \text{Sensitivity}}{\text{Precision} + \text{Sensitivity}}
+\text{Precision} = \frac{\text{True Positives (TP)}}{\text{True Positives (TP)} + \text{False Positives (FP)}}
+
 
