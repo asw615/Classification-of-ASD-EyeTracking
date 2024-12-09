@@ -84,8 +84,4 @@ The dataset includes 56 participants (27 ASD, 29 TD).
 
 ![Summary Statistics](plots/summary_stats.png)
 
-### Descriptive Table
-Key statistics of the preprocessed dataset are summarized below.
-
-![Descriptive Table](plots/summary_table.png)
 
